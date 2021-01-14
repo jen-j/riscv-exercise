@@ -27,9 +27,27 @@ We will use a (slightly modified) exercise from https://github.com/CTSRD-CHERI/c
  
  * Compile `buffer-overflow.c` to a RISC-V binary `buffer-overflow-hybrid` in hybrid capability mode (`riscv64-hybrid`). You can use the `ccc` script from `task/tools` (see the exercise docs for details) for that. What is the full commandline for compilation? 
  
- ```
- THIS IS A TEST COMMIT INTO GIT
- ```
+---
+### Solution 1
+
+Assuming that the `SYSROOT` environment variable is set for the hybrid mode, the `ccc` script can be run to produce the RISC-V binary. The `SYSROOT` can be set as follows:
+
+```bash
+SYSROOT=~/cheri/output/sdk/sysroot-riscv64-hybrid; export SYSROOT
+```
+The `ccc` script can be run from the task directory `~/cheri/riscv-exercise/task` with the following command:
+
+```bash
+./tools/ccc riscv64-hybrid ~/cheri/riscv-exercise/task/buffer-overflow.c -o buffer-overflow-hybrid
+```
+
+Note that the command also includes the required output file name of the resulting RISC-V binary. The script then runs the full command line for compilation:
+
+```bash
+Running: /home/osboxes/cheri/output/sdk/bin/clang -target riscv64-unknown-freebsd -march=rv64gcxcheri -mabi=lp64d -mno-relax --sysroot=/home/osboxes/cheri/output/sdk/sysroot-riscv64-hybrid -g -O2 -fuse-ld=lld -Wall -Wcheri /home/osboxes/cheri/riscv-exercise/task/buffer-overflow.c -o buffer-overflow-hybrid
+```
+
+---
  
  * There is a security flaw in `buffer-overflow.c`. Briefly explain what the flaw is: 
  
