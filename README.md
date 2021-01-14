@@ -51,9 +51,14 @@ Running: /home/osboxes/cheri/output/sdk/bin/clang -target riscv64-unknown-freebs
  
  * There is a security flaw in `buffer-overflow.c`. Briefly explain what the flaw is: 
  
- ```
- INSERT SOLUTION HERE
- ```
+---
+### Solution 2
+
+From inspection of the code, there are no boundary checks on the second input argument (the one after the binary file's name), potentially causing a buffer overflow security flaw when it is copied into the buffer.
+
+Two local variables are defined which are allocated memory on the stack; a character, and a character array `buffer` of 16 bytes. The second input argument from the command line is copied into the buffer as a string. C language strings are null terminated so the allocated buffer space can only store a maximum of 15 characters. The `strcpy` function however does not perform any checks on the length of the string, meaning that strings with more than 15 characters will be written into  memory locations outside the buffer. If the number of characters is 16, the 16th chracter will be written into the memory allocated for the null character (In this program it is overwritten with a 0 - null character). If the number of characters is 17 or more, they will be written into adjacent memory locations outside the allocated buffer size. For 64 bit alignment, the `char c` could be stored 8 bytes/8 characters away from the buffer, meaning that the character c could be overwritten when the input string length is 24 characters long.
+
+---
  
  * Start CHERI-RISC-V in QEMU, copy `buffer-overflow-hybrid` to the QEMU guest, and run it with a commandline argument that triggers the mentioned security flaw to overwrite the variable `c` with an attacker-controlled value. Give all the commands you have to run (assuming CHERI is in `~/cheri` and cheribuild in `~/cheribuild`):
  
