@@ -62,9 +62,59 @@ Two local variables are defined which are allocated memory on the stack; a chara
  
  * Start CHERI-RISC-V in QEMU, copy `buffer-overflow-hybrid` to the QEMU guest, and run it with a commandline argument that triggers the mentioned security flaw to overwrite the variable `c` with an attacker-controlled value. Give all the commands you have to run (assuming CHERI is in `~/cheri` and cheribuild in `~/cheribuild`):
  
-  ```
-  INSERT SOLUTION HERE
-  ```
+---
+
+### Solution 3
+
+In the QEMU guest, in the directory `/mnt/riscv-exercise/task`, the following command line is used to place the maximum of 15 characters in the buffer correctly.
+
+```bash
+./buffer-overflow-hybrid abcdefghijklmno
+```
+
+The output gives:
+
+`c = c`
+
+`Arg = abcdefghijklmno`
+
+`c = c`
+
+
+The command line to write 16 characters is:
+
+```bash
+./buffer-overflow-hybrid abcdefghijklmnop
+```
+
+The output gives:
+
+`c = c`
+
+`Arg = abcdefghijklmno`
+
+`c = c`
+
+
+Note that since the 16th character *p* is overwritten with the null character it is not output to the screen.
+
+A command line to overwrite the variable `c` with a value *x* is:
+
+```bash
+./buffer-overflow-hybrid abcdefghijklmnopqrstuvwx
+```
+
+The string length is 24 characters long. The output gives:
+
+`c = c`
+
+`Arg = abcdefghijklmno`
+
+`c = x`
+
+The character *c* in the variable `c` is overwritten with the character *x*, as described in the previous solution. Characters between *q* and *w* inclusive are not output as they overwrite padding locations. 
+
+---
   
  * Now, compile the same program in pure capability mode (`riscv64-purecap`) to `buffer-overflow-purecap`. What happens when you run this program in QEMU with the same input that triggered the flaw in `buffer-overflow-hybrid`? Explain why this happens!
 
